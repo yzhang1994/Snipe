@@ -63,8 +63,8 @@ module.exports = {
       algorithm: 'gzip',
       test: /\.js$|\.html$/,
       threshold: 1024,
-      minRatio: 0.99,
-      deleteOriginalAssets: false,
+      minRatio: 0.97,
+      deleteOriginalAssets: true,
     }),
     // new BundleAnalyzerPlugin(),
     new CleanWebpackPlugin(['dist/*.*'], {
