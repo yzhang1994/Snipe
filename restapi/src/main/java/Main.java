@@ -21,6 +21,10 @@ public class Main {
     public static void main(String[] args) {
         final Logger logger = LoggerFactory.getLogger(DemoAccount.class);
         Javalin app = Javalin.create().start(getHerokuAssignedPort());
+        app.before(ctx -> {
+            ctx.header("Access-Control-Allow-Headers","Access-Control-Allow-Origin, X-Requested-With, Content-Type, Accept");
+            ctx.header("Access-Control-Allow-Origin","*");
+        });
         app.get("/account/balance/:shard_num/:realm_num/:account_num", ctx -> {
             HederaAccount account = new HederaAccount(
                     Long.parseLong(ctx.pathParam("shard_num")),
