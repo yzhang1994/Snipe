@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Input, Button, Label } from 'bloomer';
+import Hero from '../Hero';
 import {
   getEvents, tokenBalanceOfPromise, tokenConstantPromise, convertBigNum,
 } from '../../utils/erc20';
@@ -16,6 +17,8 @@ class ERC20Port extends Component {
       address: '',
       balances: {},
       buttonLoading: false,
+      hideButton: true,
+      sendButtonLoading: false,
       name: null,
       symbol: null,
       decimals: null,
@@ -40,12 +43,16 @@ class ERC20Port extends Component {
   }
 
   async sendContract() {
+    this.setState({ sendButtonLoading: true });
     const { address, balances, name, symbol, decimals, totalSupply } = this.state;
-    const data = { address, balances, name, symbol, decimals, totalSupply };
+    const data = { address, name, symbol, decimals, totalSupply };
     try {
-      const response = axios.post('/target/create-token', data);
-      console.log(response.data);
+      const createTokenResponse = await axios.post('/target/create-token', data);
+      console.log(createTokenResponse.data);
+      const setBalanceResponse = await axios.post('/target/set-balance', { address, balances });
+      console.log(setBalanceResponse.data);
     } catch (e) { console.error(e); }
+    this.setState({ sendButtonLoading: false });
   }
 
   async submitContract(initial = INITIAL) {
@@ -57,6 +64,7 @@ class ERC20Port extends Component {
         initialBlock += SEGMENT;
       }
       await this.playback(initialBlock, FINAL);
+      this.setState({ hideButton: false });
     } catch (e) { console.error(e); }
   }
 
@@ -93,21 +101,21 @@ class ERC20Port extends Component {
   }
 
   render() {
-    const { address, balances, buttonLoading, name, symbol, decimals, totalSupply } = this.state;
+    const {
+      address,
+      balances,
+      buttonLoading,
+      name,
+      symbol,
+      decimals,
+      totalSupply,
+      hideButton,
+      sendButtonLoading,
+    } = this.state;
+
     return (
       <div>
-        <div className="hero is-light is-small">
-          <div className="hero-body container has-text-centered">
-            <img src="/images/logo.png" width="200px" alt="logo" />
-            <br />
-            <h1 className="title is-1">
-              snipe
-            </h1>
-            <h3 className="is-size-5">
-              A Data Port between Ethereum and Hashgraph
-            </h3>
-          </div>
-        </div>
+        <Hero />
         <div className="container section has-text-centered">
           <Label className="is-size-5">Enter your ERC20 Token Address</Label>
           <br />
@@ -120,12 +128,22 @@ class ERC20Port extends Component {
             isSize="large"
             onClick={() => { this.submitContract(); }}
           >
-            Submit
+            Get Snapshot
+          </Button>
+          &nbsp;
+          <Button
+            isHidden={hideButton}
+            isColor="info"
+            isLoading={sendButtonLoading}
+            isSize="large"
+            onClick={this.sendContract}
+          >
+            Write data to Hashgraph
           </Button>
           <br />
           <br />
           <div className="columns">
-            <div className="column has-text-left is-4 has-text-weight-bold">
+            <div className="column has-text-left is-5 has-text-weight-bold">
               <br />
               {name && (<div>Name: {name}</div>)}
               {symbol && (<div>Symbol: {symbol}</div>)}
