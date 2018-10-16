@@ -48,7 +48,7 @@ public class Main {
             HederaCryptoKeyPair accountXferToKey = new HederaCryptoKeyPair(KeyType.ED25519);
 
             HederaAccount new_account = AccountCreate.create(main_account, newAccountKey,10000);
-            Thread.sleep(1000);
+            Thread.sleep(1500);
             HederaAccountID account_id = new_account.getHederaAccountID();
             HashMap res = new HashMap();
             ctx.header("Access-Control-Allow-Headers","Access-Control-Allow-Origin, X-Requested-With, Content-Type, Accept");
@@ -59,6 +59,7 @@ public class Main {
             HederaTransactionReceipt receipt = Utilities.getReceipt(
                     main_account.hederaTransactionID,
                     main_account.txQueryDefaults.node);
+            Thread.sleep(1500);
             res.put("receipt", JsonFormat.printToString(receipt.getProtobuf()));
             ctx.json(res);
 
