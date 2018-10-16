@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Button } from 'bloomer';
 import Hero from '../Hero';
 
 class Migration extends Component {
@@ -21,12 +22,13 @@ class Migration extends Component {
           &nbsp;
           <Button
             isColor="dark"
-            isLoading={buttonLoading}
+            // isLoading={buttonLoading}
             isSize="large"
             onClick={this.setBalance}
           >
             Write to TestRPC
           </Button>
+        </div>
       </div>
     );
   }
