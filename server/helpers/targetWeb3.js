@@ -20,7 +20,7 @@ const deployContract = async (args) => {
   let address;
   try {
     const instance = await deployed.send({ from, gas: GAS_LIMIT });
-    address = instance.options.address;
+    ({ address } = instance.options);
     console.log(address);
   } catch (e) {
     console.log(e.toString());

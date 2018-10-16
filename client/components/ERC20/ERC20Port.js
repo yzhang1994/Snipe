@@ -25,6 +25,7 @@ class ERC20Port extends Component {
     this.submitContract = this.submitContract.bind(this);
     this.playback = this.playback.bind(this);
     this.getTokenConstants = this.getTokenConstants.bind(this);
+    this.sendContract = this.sendContract.bind(this);
   }
 
   async getTokenConstants() {
@@ -42,7 +43,7 @@ class ERC20Port extends Component {
     const { address, balances, name, symbol, decimals, totalSupply } = this.state;
     const data = { address, balances, name, symbol, decimals, totalSupply };
     try {
-      const response = axios.post('/write-contract', data);
+      const response = axios.post('/target/create-token', data);
       console.log(response.data);
     } catch (e) { console.error(e); }
   }

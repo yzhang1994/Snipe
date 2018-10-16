@@ -10,7 +10,7 @@ targetRouter.route('/create-token')
   .post(async (req, res) => {
     console.log(req.body);
     try {
-      const { name, symbol, decimals, supply, parentAddress } = req.body;
+      const { name, symbol, decimals, totalSupply: supply, address: parentAddress } = req.body;
       const address = await deployContract([name, symbol, decimals, supply, parentAddress]);
       return res.status(200).send(address);
     } catch (e) {
