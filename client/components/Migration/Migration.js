@@ -9,9 +9,24 @@ class Migration extends Component {
     return (
       <div>
         <Hero />
-        <div className="container">
-          Migration
-        </div>
+        <div className="container has-text-centered">
+          <br />
+          <Button
+            disabled
+            isColor="dark"
+            isSize="large"
+          >
+            Write to Hashgraph
+          </Button>
+          &nbsp;
+          <Button
+            isColor="dark"
+            isLoading={buttonLoading}
+            isSize="large"
+            onClick={this.setBalance}
+          >
+            Write to TestRPC
+          </Button>
       </div>
     );
   }
