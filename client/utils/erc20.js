@@ -1,5 +1,5 @@
 import { abi as tokenAbi } from '../contracts/ERC20.json';
-import { getContractInstance } from './web3';
+import { getContractInstance, getPrivateContractInstance } from './web3';
 import { playbackContract } from './eventWatcher';
 
 const basicGasLimit = 3e5;
@@ -46,6 +46,13 @@ const tokenBalanceOfPromise = async (_token, _owner) => {
   return Number(amount);
 };
 
+// balanceOf(address who) public view returns (uint256);
+const privateTokenBalanceOfPromise = async (_token, _owner) => {
+  const tokenInstance = getPrivateContractInstance(_token, tokenAbi);
+  const amount = await tokenInstance.methods.balanceOf(_owner).call();
+  return Number(amount);
+};
+
 // allowance(address owner, address spender) public view returns (uint256);
 const tokenAllowancePromise = async (_token, _owner, _spender) => {
   const tokenInstance = getContractInstance(_token, tokenAbi);
@@ -85,6 +92,7 @@ const tokenFaucetPromise = async (_token, _owner, callback) => {
 
 
 module.exports = {
+  privateTokenBalanceOfPromise,
   convertBigNum,
   getEvents,
   tokenAllowancePromise,
