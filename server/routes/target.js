@@ -1,14 +1,14 @@
 const express = require('express');
 
 const { deployContract } = require('../helpers/targetWeb3.js');
-const { setInitialBalance, setMultipleInitialBalances } = require('../helpers/targetContracts.js');
+const { setInitialBalance, setMultipleInitialBalances, getHolderBalance } = require('../helpers/targetContracts.js');
 
 const targetRouter = express.Router();
 
 
 targetRouter.route('/create-token')
   .post(async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     try {
       const { name, symbol, decimals, totalSupply: supply, address: parentAddress } = req.body;
       const address = await deployContract([name, symbol, decimals, supply, parentAddress]);
@@ -21,7 +21,7 @@ targetRouter.route('/create-token')
 
 targetRouter.route('/set-balance')
   .post((req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     try {
       const { address: contractAddress, balances } = req.body;
       Object.keys(balances).forEach((holder) => {
@@ -33,9 +33,21 @@ targetRouter.route('/set-balance')
     }
   });
 
+targetRouter.route('/get-balance')
+  .post(async (req, res) => {
+    console.log(req.body);
+    try {
+      const { contractAddress, holder } = req.body;
+      const value = await getHolderBalance(contractAddress, holder);
+      return res.status(200).send(value);
+    } catch (e) {
+      return res.status(500).send({ error: 'could not retrieve balance ' });
+    }
+  });
+
 targetRouter.route('/set-all-balances')
   .post((req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     try {
       const { address: contractAddress, balances } = req.body;
       console.log(contractAddress);

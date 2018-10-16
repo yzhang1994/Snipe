@@ -30,26 +30,31 @@ class Migration extends Component {
       console.log(setBalanceResponse.data);
     } catch (e) { console.error(e); }
 
-    this.setState({ buttonLoading: false });
-
     let index = 0;
     while (index < Object.keys(balances).length) {
-      const holder = balances[index];
+      const holder = Object.keys(balances)[index];
       await this.getBalance(holder);
       index += 1;
     }
+
+    this.setState({ buttonLoading: false });
   }
 
   async getBalance(holder) {
     const { newBalances } = this.state;
     const { newContractAddress } = this.props;
-    const getBalanceResponse = await axios.post('/target/set-balance', {
+    console.log(holder, newContractAddress);
+    const getBalanceResponse = await axios.post('/target/get-balance', {
       holder,
       contractAddress: newContractAddress,
     });
     console.log(getBalanceResponse.data);
     const value = getBalanceResponse.data;
-    this.setState({ newBalances: { ...newBalances, [holder]: convertBigNum(value) } });
+    if (!value) {
+      this.getBalance(holder);
+    } else {
+      this.setState({ newBalances: { ...newBalances, [holder]: convertBigNum(value) } });
+    }
   }
 
   render() {

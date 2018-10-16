@@ -36,7 +36,14 @@ const setMultipleInitialBalances = async (contractAddress, balances) => {
   setBalance(0);
 };
 
+const getHolderBalance = async (contractAddress, holder) => {
+  const contractInstance = getContractInstance(contractAddress, abi);
+  const value = await contractInstance.methods.balanceOf(holder).call({ from: deployer });
+  return value;
+};
+
 module.exports = {
+  getHolderBalance,
   setInitialBalance,
   setMultipleInitialBalances,
 };
