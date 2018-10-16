@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const { targetRouter } = require('./routes');
 
 const app = express();
 
@@ -23,7 +24,11 @@ const httpsRedirect = (req, res, next) => {
 
 // Middleware
 app.use(httpsRedirect);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+
+app.use('/target', targetRouter);
 
 // Views
 app.get('/*', (req, res) => { res.sendFile(path.join(__dirname, '../public/index.html')); });
