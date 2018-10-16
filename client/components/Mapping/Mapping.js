@@ -32,7 +32,7 @@ class Mapping extends Component {
       } catch (e) { console.error(e); }
       if (mappingResponse.data) {
         console.log(mappingResponse.data);
-        hashgraphAddresses[holder] = mappingResponse.data || {};
+        hashgraphAddresses[holder] = mappingResponse.data.public_key || 'Unknown';
         setParentState({ hashgraphAddresses });
       }
       index += 1;
@@ -73,23 +73,10 @@ class Mapping extends Component {
           <br />
           <div>
             {Object.keys(balances).map((holder) => {
-              const hashgraphData = hashgraphAddresses[holder];
               return (
                 <div key={holder}>
                   <span className="has-text-grey-dark">{holder} :  </span>
-                  {hashgraphData && (
-                    <code>
-                      <span>
-                        Account ID: {hashgraphData.accountID}
-                      </span>
-                      <span>
-                        Private Key: {hashgraphData.private_key}
-                      </span>
-                      <span>
-                        Public Key: {hashgraphData.public_key}
-                      </span>
-                    </code>
-                  )}
+                  <code>{hashgraphAddresses[holder]}</code>
                 </div>
               );
             })}
