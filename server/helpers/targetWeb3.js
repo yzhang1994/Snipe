@@ -2,6 +2,8 @@
 require('dotenv').config();
 const Eth = require('web3-eth');
 
+const { abi, bytecode } = require('../../smart-contracts/build/contracts/MigratedToken.json');
+
 // const { NAME, SYMBOL, DECIMALS, SUPPLY, MIGRATED_TOKEN_ADDRESS, GAS_PRICE_DEV, GAS_LIMIT } = require('../../smart-contracts/config.js');
 
 const targetEth = new Eth(process.env.TARGET_BLOCKCHAIN_URL);
@@ -13,7 +15,7 @@ const account = targetEth.accounts.privateKeyToAccount(`0x${privateKey}`);
 targetEth.accounts.wallet.add(account);
 targetEth.defaultAccount = account.address;
 
-const deployContract = async (abi, bytecode, args) => {
+const deployContract = async (args) => {
   const newContract = new targetEth.Contract(abi, { from, data: bytecode });
   const deployed = await newContract.deploy({ data: bytecode, arguments: args });
   let address;
@@ -42,7 +44,6 @@ const getBlockTimestamp = (blockNumber) => {
   });
 };
 
-// const { abi, bytecode } = require('../../smart-contracts/build/contracts/MigratedToken.json');
 
 // const run = async () => {
 //   const address = await deployContract(abi, bytecode, [NAME, SYMBOL, DECIMALS, SUPPLY, MIGRATED_TOKEN_ADDRESS]);

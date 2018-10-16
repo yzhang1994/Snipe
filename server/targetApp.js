@@ -1,5 +1,7 @@
+const bodyParser = require('body-parser');
 const express = require('express');
 const path = require('path');
+const { targetRouter } = require('./routes');
 
 const app = express();
 
@@ -23,10 +25,13 @@ if (process.env.NODE_ENV !== 'local') {
 
 // Middleware
 // app.use(httpsRedirect);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+
+app.use('/target', targetRouter);
 
 // Views
 app.get('/*', (req, res) => { res.sendFile(path.join(__dirname, '../public/index.html')); });
-
 
 module.exports = app;

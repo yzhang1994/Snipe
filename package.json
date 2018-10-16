@@ -23,6 +23,7 @@
     "babel-preset-stage-2": "^6.24.1",
     "babel-register": "^6.26.0",
     "bloomer": "^0.6.3",
+    "body-parser": "^1.18.3",
     "clean-webpack-plugin": "^0.1.19",
     "compression-webpack-plugin": "^1.1.11",
     "dotenv": "^6.0.0",
