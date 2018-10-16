@@ -10,9 +10,10 @@ targetRouter.route('/create-token')
   .post(async (req, res) => {
     console.log(req.body);
     try {
-      const { name, symbol, decimals, supply, parentAddress } = req.body;
+      const { name, symbol, decimals, totalSupply: supply, address: parentAddress } = req.body;
       const address = await deployContract([name, symbol, decimals, supply, parentAddress]);
-      return res.status(200).send(address);
+      console.log('new contract address', address);
+      return res.status(200).send({ address });
     } catch (e) {
       return res.status(500).send({ error: 'MigrateToken cannot be created' });
     }
@@ -22,9 +23,11 @@ targetRouter.route('/set-balance')
   .post((req, res) => {
     console.log(req.body);
     try {
-      const { contractAddress, holder, value } = req.body;
-      setInitialBalance(contractAddress, holder, value);
-      return res.status(200).send(`update: ${holder} ${value}`);
+      const { address: contractAddress, balances } = req.body;
+      Object.keys(balances).forEach((holder) => {
+        setInitialBalance(contractAddress, holder, balances[holder]);
+      });
+      return res.status(200).send('balance set');
     } catch (e) {
       return res.status(500).send({ error: 'Could not set balances' });
     }

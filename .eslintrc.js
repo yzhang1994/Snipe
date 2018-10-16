@@ -17,6 +17,7 @@ module.exports = {
     "react/jsx-one-expression-per-line": "off",
     "import/named": "off",
     "no-await-in-loop": "off",
+    "react/prop-types": "off",
   },
   "globals": {
     "document": true,
