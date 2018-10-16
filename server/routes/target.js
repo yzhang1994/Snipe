@@ -12,7 +12,8 @@ targetRouter.route('/create-token')
     try {
       const { name, symbol, decimals, totalSupply: supply, address: parentAddress } = req.body;
       const address = await deployContract([name, symbol, decimals, supply, parentAddress]);
-      return res.status(200).send(address);
+      console.log('new contract address', address);
+      return res.status(200).send({ address });
     } catch (e) {
       return res.status(500).send({ error: 'MigrateToken cannot be created' });
     }

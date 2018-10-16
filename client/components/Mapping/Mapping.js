@@ -21,8 +21,11 @@ class Mapping extends Component {
     try {
       const mappingResponse = await axios.post('http://localhost:7000/account', {}, { headers: { 'Access-Control-Allow-Origin': '*' } });
       if (mappingResponse.data) {
+<<<<<<< HEAD
         this.hashgraphAddresses = this.hashgraphAddresses || {};
         console.log(mappingResponse.data);
+=======
+>>>>>>> ef0d9469603afa947f1902fef2c36f8e6dbd2c5a
         this.hashgraphAddress[holder] = mappingResponse.data.public_key || 'Unknown';
       }
     } catch (e) { console.error(e); }
@@ -30,6 +33,7 @@ class Mapping extends Component {
 
   async generateMapping() {
     const { balances, setParentState } = this.props;
+<<<<<<< HEAD
     // this.hashgraphAddresses = {};
     const bals = Object.keys(balances);
 
@@ -40,6 +44,12 @@ class Mapping extends Component {
       index += 1;
     }
 
+=======
+    this.hashgraphAddresses = {};
+    Object.keys(balances).forEach(async (holder) => {
+      await this.generateIndividualMapping(holder);
+    });
+>>>>>>> ef0d9469603afa947f1902fef2c36f8e6dbd2c5a
     setParentState({ hashgraphAddresses: this.hashgraphAddresses });
   }
 
