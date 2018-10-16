@@ -1,7 +1,7 @@
 module.exports = {
   // Gas price used for development and testing
   GAS_PRICE_DEV: 20e9,
-  GAS_LIMIT: 5e6,
+  GAS_LIMIT: 4.7e6,
 
   // Addresses
   DEPLOYER_ADDRESS: '0x55E4b02f5064743386b4E083A4b7754380513c48',
