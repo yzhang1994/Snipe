@@ -1,26 +1,68 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import { Input, Button, Label } from 'bloomer';
-import { getEvents, tokenBalanceOfPromise } from '../../utils/erc20';
+import {
+  getEvents, tokenBalanceOfPromise, tokenConstantPromise, convertBigNum,
+} from '../../utils/erc20';
 
+const INITIAL = 3978343;
+const FINAL = 4100000;
+const SEGMENT = 10000;
 
 class ERC20Port extends Component {
   constructor(props) {
     super(props);
     this.state = {
       address: '',
-      code: [],
+      balances: {},
       buttonLoading: false,
+      name: null,
+      symbol: null,
+      decimals: null,
+      totalSupply: null,
     };
     this.handleChange = this.handleChange.bind(this);
     this.submitContract = this.submitContract.bind(this);
+    this.playback = this.playback.bind(this);
+    this.getTokenConstants = this.getTokenConstants.bind(this);
   }
 
-  async submitContract() {
-    const { address } = this.state;
-    this.setState({ buttonLoading: true });
+  async getTokenConstants() {
+    try {
+      const { address } = this.state;
+      const name = await tokenConstantPromise(address, 'name');
+      const symbol = await tokenConstantPromise(address, 'symbol');
+      const decimals = await tokenConstantPromise(address, 'decimals');
+      const totalSupply = await tokenConstantPromise(address, 'totalSupply');
+      this.setState({ name, symbol, decimals, totalSupply });
+    } catch (e) { console.error(e); }
+  }
 
-    const transfers = await getEvents(address);
-    console.log('transfers', transfers);
+  async sendContract() {
+    const { address, balances, name, symbol, decimals, totalSupply } = this.state;
+    const data = { address, balances, name, symbol, decimals, totalSupply };
+    try {
+      const response = axios.post('/write-contract', data);
+      console.log(response.data);
+    } catch (e) { console.error(e); }
+  }
+
+  async submitContract(initial = INITIAL) {
+    try {
+      this.getTokenConstants();
+      let initialBlock = initial;
+      while (initialBlock + SEGMENT < FINAL) {
+        await this.playback(initialBlock, initialBlock + SEGMENT);
+        initialBlock += SEGMENT;
+      }
+      await this.playback(initialBlock, FINAL);
+    } catch (e) { console.error(e); }
+  }
+
+  async playback(initial, final) {
+    const { address, balances } = this.state;
+    this.setState({ buttonLoading: true });
+    const transfers = await getEvents(address, initial, final);
 
     const holdersMap = {};
     transfers.forEach((transfer) => {
@@ -32,17 +74,17 @@ class ERC20Port extends Component {
       return tokenBalanceOfPromise(address, holder);
     });
     const balArray = await Promise.all(promises);
-    console.log('balArray', balArray);
 
-    const messages = [];
+    const newMap = [];
     balArray.forEach((bal, i) => {
-      const holder = Object.keys(holdersMap)[i];
-      const msg = `${holder} : ${bal}`;
-      messages.push(msg);
+      if (bal > 0) {
+        const holder = Object.keys(holdersMap)[i];
+        newMap[holder] = convertBigNum(bal);
+      }
     });
-    console.log('messages', messages);
-
-    this.setState({ code: messages, buttonLoading: false });
+    const result = { ...balances, ...newMap };
+    this.setState({ balances: result, buttonLoading: false });
+    return result;
   }
 
   handleChange(e) {
@@ -50,7 +92,7 @@ class ERC20Port extends Component {
   }
 
   render() {
-    const { address, code, buttonLoading } = this.state;
+    const { address, balances, buttonLoading, name, symbol, decimals, totalSupply } = this.state;
     return (
       <div>
         <div className="hero is-light is-small">
@@ -75,19 +117,30 @@ class ERC20Port extends Component {
             isColor="dark"
             isLoading={buttonLoading}
             isSize="large"
-            onClick={this.submitContract}
+            onClick={() => { this.submitContract(); }}
           >
             Submit
           </Button>
           <br />
           <br />
-          <code>
-            {code.map((line) => {
-              return (
-                <div key={line}>{line}</div>
-              );
-            })}
-          </code>
+          <div className="columns">
+            <div className="column has-text-left is-4 has-text-weight-bold">
+              <br />
+              {name && (<div>Name: {name}</div>)}
+              {symbol && (<div>Symbol: {symbol}</div>)}
+              {decimals && (<div>Decimals: {decimals}</div>)}
+              {totalSupply && (<div>Total Supply: {totalSupply}</div>)}
+            </div>
+            <div className="column">
+              <code className="has-text-left">
+                {Object.keys(balances).map((holder) => {
+                  return (
+                    <div key={holder}>{holder} : {balances[holder]}</div>
+                  );
+                })}
+              </code>
+            </div>
+          </div>
         </div>
       </div>
     );

@@ -4,25 +4,39 @@ import { playbackContract } from './eventWatcher';
 
 const basicGasLimit = 3e5;
 
-const getEvents = async (address) => {
+const convertBigNum = (num) => {
+  const str = num.toString();
+  if (!str.includes('e+')) return str;
+  const arr = str.split('e+');
+  const digits = arr[0].toString();
+  let endian = parseFloat(arr[1], 10);
+
+  const numArr = digits.split('.');
+  let base = numArr[0].toString();
+  const decimals = numArr[1] || '';
+  endian -= decimals.length;
+  base += decimals;
+  for (let i = 0; i < endian; i += 1) base += '0';
+  return base;
+};
+
+const getEvents = async (address, initialBlock, finalBlock) => {
   try {
-    const initialBlock = 5130718;
     const events = await playbackContract({
       abi: tokenAbi,
       address,
       event: 'Transfer',
-    }, initialBlock, 'latest');
-    console.log(events);
+    }, initialBlock, finalBlock);
     return events;
   } catch (e) {
     return null;
   }
 };
 
-const tokenTotalSupplyPromise = async (_address) => {
+const tokenConstantPromise = async (_address, _constant) => {
   const tokenInstance = getContractInstance(_address, tokenAbi);
-  const amount = await tokenInstance.methods.totalSupply.call();
-  return Number(amount);
+  const amount = await tokenInstance.methods[_constant].call().call();
+  return amount;
 };
 
 // balanceOf(address who) public view returns (uint256);
@@ -71,11 +85,12 @@ const tokenFaucetPromise = async (_token, _owner, callback) => {
 
 
 module.exports = {
+  convertBigNum,
   getEvents,
   tokenAllowancePromise,
   tokenApprovePromise,
   tokenBalanceOfPromise,
   tokenFaucetPromise,
-  tokenTotalSupplyPromise,
+  tokenConstantPromise,
   tokenTransferPromise,
 };
