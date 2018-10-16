@@ -51,7 +51,7 @@ public class Main {
             Thread.sleep(1000);
             HederaAccountID account_id = new_account.getHederaAccountID();
             HashMap res = new HashMap();
-            ctx.header("Access-Control-Allow-Origin","Access-Control-Allow-Origin, X-Requested-With, Content-Type, Accept");
+            ctx.header("Access-Control-Allow-Headers","Access-Control-Allow-Origin, X-Requested-With, Content-Type, Accept");
             ctx.header("Access-Control-Allow-Origin","*");
             res.put("account_id", new_account.accountNum);
             res.put("public_key", newAccountKey.getPublicKey());
