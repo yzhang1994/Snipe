@@ -51,9 +51,10 @@ public class Main {
             Thread.sleep(1000);
             HederaAccountID account_id = new_account.getHederaAccountID();
             HashMap res = new HashMap();
+            ctx.header("Access-Control-Allow-Origin","*");
             res.put("account_id", new_account.accountNum);
-            res.put("public_key", newAccountKey.getPublicKey().toString());
-            res.put("private_key", newAccountKey.getSecretKey().toString());
+            res.put("public_key", newAccountKey.getPublicKey());
+            res.put("private_key", newAccountKey.getSecretKey());
             HederaTransactionReceipt receipt = Utilities.getReceipt(
                     main_account.hederaTransactionID,
                     main_account.txQueryDefaults.node);
