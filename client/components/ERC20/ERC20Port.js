@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import { Input, Button, Label } from 'bloomer';
 import {
   getEvents, tokenBalanceOfPromise, tokenConstantPromise, convertBigNum,
@@ -27,22 +28,35 @@ class ERC20Port extends Component {
   }
 
   async getTokenConstants() {
-    const { address } = this.state;
-    const name = await tokenConstantPromise(address, 'name');
-    const symbol = await tokenConstantPromise(address, 'symbol');
-    const decimals = await tokenConstantPromise(address, 'decimals');
-    const totalSupply = await tokenConstantPromise(address, 'totalSupply');
-    this.setState({ name, symbol, decimals, totalSupply });
+    try {
+      const { address } = this.state;
+      const name = await tokenConstantPromise(address, 'name');
+      const symbol = await tokenConstantPromise(address, 'symbol');
+      const decimals = await tokenConstantPromise(address, 'decimals');
+      const totalSupply = await tokenConstantPromise(address, 'totalSupply');
+      this.setState({ name, symbol, decimals, totalSupply });
+    } catch (e) { console.error(e); }
+  }
+
+  async sendContract() {
+    const { address, balances, name, symbol, decimals, totalSupply } = this.state;
+    const data = { address, balances, name, symbol, decimals, totalSupply };
+    try {
+      const response = axios.post('/write-contract', data);
+      console.log(response.data);
+    } catch (e) { console.error(e); }
   }
 
   async submitContract(initial = INITIAL) {
-    this.getTokenConstants();
-    let initialBlock = initial;
-    while (initialBlock + SEGMENT < FINAL) {
-      await this.playback(initialBlock, initialBlock + SEGMENT);
-      initialBlock += SEGMENT;
-    }
-    await this.playback(initialBlock, FINAL);
+    try {
+      this.getTokenConstants();
+      let initialBlock = initial;
+      while (initialBlock + SEGMENT < FINAL) {
+        await this.playback(initialBlock, initialBlock + SEGMENT);
+        initialBlock += SEGMENT;
+      }
+      await this.playback(initialBlock, FINAL);
+    } catch (e) { console.error(e); }
   }
 
   async playback(initial, final) {
@@ -66,8 +80,6 @@ class ERC20Port extends Component {
       if (bal > 0) {
         const holder = Object.keys(holdersMap)[i];
         newMap[holder] = convertBigNum(bal);
-        // const msg = `${holder} : ${bal}`;
-        // messages.push(msg);
       }
     });
     const result = { ...balances, ...newMap };
