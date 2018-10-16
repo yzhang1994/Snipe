@@ -11,6 +11,29 @@ const setInitialBalance = async (contractAddress, holder, value) => {
   return receipt;
 };
 
+const setMultipleInitialBalances = async (contractAddress, values) => {
+  const contractInstance = getContractInstance(contractAddress, abi);
+  console.log('+++++++');
+  console.log(values);
+  console.log(typeof values);
+  console.log('+++++++');
+
+  const valuesArray = JSON.parse(values);
+  const count = valuesArray.length;
+
+  const setBalance = async (index) => {
+    if (index < count) {
+      console.log(valuesArray[index]);
+      const { holder, value } = valuesArray[index];
+      await contractInstance.methods.setInitialHolderBalance(holder, value)
+        .send({ from: deployer, gas: GAS_LIMIT });
+      setBalance(index + 1);
+    }
+  };
+  setBalance(0);
+};
+
 module.exports = {
   setInitialBalance,
+  setMultipleInitialBalances,
 };
