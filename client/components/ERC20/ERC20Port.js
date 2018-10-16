@@ -46,7 +46,7 @@ class ERC20Port extends Component {
             Get Snapshot
           </Button>
           &nbsp;
-          <NavLink to="/mapping">
+          <NavLink to="/deploy">
             <Button
               isHidden={hideButton}
               isColor="info"
