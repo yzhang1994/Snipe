@@ -43,29 +43,30 @@ module.exports = {
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
         ETH_NETWORK: JSON.stringify(process.env.ETH_NETWORK),
+        ETH_NODE_URL: JSON.stringify(process.env.ETH_NODE_URL),
       },
     }),
     new webpack.optimize.AggressiveMergingPlugin(),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
     new webpack.optimize.ModuleConcatenationPlugin(),
-    new UglifyJSPlugin({
-      uglifyOptions: {
-        ie8: true,
-        ecma: 7,
-        mangle: false,
-        output: { comments: false, beautify: false },
-        warnings: false,
-      },
-      sourceMap: false,
-    }),
-    new CompressionPlugin({
-      asset: '[path].gz[query]',
-      algorithm: 'gzip',
-      test: /\.js$|\.html$/,
-      threshold: 1024,
-      minRatio: 0.97,
-      deleteOriginalAssets: true,
-    }),
+    // new UglifyJSPlugin({
+    //   uglifyOptions: {
+    //     ie8: true,
+    //     ecma: 7,
+    //     mangle: false,
+    //     output: { comments: false, beautify: false },
+    //     warnings: false,
+    //   },
+    //   sourceMap: false,
+    // }),
+    // new CompressionPlugin({
+    //   asset: '[path].gz[query]',
+    //   algorithm: 'gzip',
+    //   test: /\.js$|\.html$/,
+    //   threshold: 1024,
+    //   minRatio: 0.97,
+    //   deleteOriginalAssets: true,
+    // }),
     // new BundleAnalyzerPlugin(),
     new CleanWebpackPlugin(['dist/*.*'], {
       root: path.join(__dirname, 'public'),

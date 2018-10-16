@@ -1,8 +1,18 @@
 import React, { Component } from 'react';
 import { Input, Button, Label } from 'bloomer';
 
+import { getTokenTransfers } from '../../utils/parseERC20';
+
+
 class ERC20Port extends Component {
-  componentDidMount() {}
+  componentDidMount() {
+    this.getEvents();
+  }
+
+  async getEvents() {
+    const events = await getTokenTransfers('0xcdd92d27efb4888b8a385a509a3b65e6aeebb37a', 2927613);
+    console.log(events);
+  }
 
   render() {
     return (
