@@ -19,7 +19,7 @@ class Mapping extends Component {
     // const { setParentState, hashgraphAddresses } = this.props;
     // let hashgraphAddress = 'Unknown';
     try {
-      const mappingResponse = await axios.post('http://localhost:7000/account');
+      const mappingResponse = await axios.post('http://localhost:7000/account', {}, { headers: { 'Access-Control-Allow-Origin': '*' } });
       if (mappingResponse.data) {
         this.hashgraphAddress[holder] = mappingResponse.data.public_key || 'Unknown';
       }
