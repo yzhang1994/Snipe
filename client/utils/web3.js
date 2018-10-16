@@ -2,7 +2,7 @@ const Web3 = require('web3');
 
 let web3;
 
-const web3Url = process.env.ETH_NODE_URL;
+const web3Url = process.env.WEB3_URL_SERVER;
 
 const __getWeb3 = () => {
   return new Web3(window.web3.currentProvider || new Web3.providers.HttpProvider(web3Url));
