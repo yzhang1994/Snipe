@@ -59,4 +59,4 @@ docker/
 
 # Build
 build/
-.env
+# .env

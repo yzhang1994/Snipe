@@ -1,0 +1,20 @@
+module.exports = {
+  // Gas price used for development and testing
+  GAS_PRICE_DEV: 20e9,
+  GAS_LIMIT: 5e6,
+
+  // Addresses
+  DEPLOYER_ADDRESS: '0x55E4b02f5064743386b4E083A4b7754380513c48',
+
+  // MigratedToken details
+  NAME: 'MigratedZRX',
+  SYMBOL: 'NewZRX',
+  DECIMALS: 18,
+  SUPPLY: 100e18,
+  MIGRATED_TOKEN_ADDRESS: '0xE41d2489571d322189246DaFA5ebDe1F4699F498',
+
+  // Zero address
+  ZERO_ADDRESS: '0x0000000000000000000000000000000000000000',
+
+  PORT: 8545,
+};
