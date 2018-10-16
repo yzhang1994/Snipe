@@ -22,9 +22,11 @@ targetRouter.route('/set-balance')
   .post((req, res) => {
     console.log(req.body);
     try {
-      const { contractAddress, holder, value } = req.body;
-      setInitialBalance(contractAddress, holder, value);
-      return res.status(200).send(`update: ${holder} ${value}`);
+      const { address: contractAddress, balances } = req.body;
+      Object.keys(balances).forEach((holder) => {
+        setInitialBalance(contractAddress, holder, balances[holder]);
+      });
+      return res.status(200).send('balance set');
     } catch (e) {
       return res.status(500).send({ error: 'Could not set balances' });
     }
