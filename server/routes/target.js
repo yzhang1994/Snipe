@@ -34,8 +34,9 @@ targetRouter.route('/set-all-balances')
   .post((req, res) => {
     console.log(req.body);
     try {
-      const { contractAddress, values } = req.body;
-      setMultipleInitialBalances(contractAddress, values);
+      const { address: contractAddress, balances } = req.body;
+      console.log(contractAddress);
+      setMultipleInitialBalances(contractAddress, balances);
       return res.status(200).send('Balance request received');
     } catch (e) {
       return res.status(500).send({ error: 'Balance request error' });
